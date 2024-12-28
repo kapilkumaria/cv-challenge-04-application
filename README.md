@@ -23,3 +23,11 @@ Each challenge repository contains detailed documentation, scripts, and configur
 
 # 💡 Week 4: GitOps-Based Kubernetes Deployment
 
+This project deploys a multi-component microservices application to Kubernetes using GitOps principles and automating workflows across three repositories:
+
+- **Infra Repo**: Manage cloud infrastructure provisioning and configuration with Terraform and Ansible.
+- **Application Repo**: Handle microservices source code, Dockerfiles, and CI pipelines for Docker image management.
+- **K8 Manifests Repo**: Store Kubernetes manifests for the microservices application (excluding ArgoCD manifests, which are managed by Ansible).
+
+## Objectives
+
