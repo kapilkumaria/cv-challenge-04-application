@@ -29,5 +29,15 @@ This project deploys a multi-component microservices application to Kubernetes u
 - **Application Repo**: Handle microservices source code, Dockerfiles, and CI pipelines for Docker image management.
 - **K8 Manifests Repo**: Store Kubernetes manifests for the microservices application (excluding ArgoCD manifests, which are managed by Ansible).
 
+## This Project has Multiple Repositories:  
+
+1. [**Application Microservices Source Code 🔧 🛠️**](https://github.com/kapilkumaria/cv-challenge-04) - [**Repo Here**](https://github.com/kapilkumaria/cv-challenge-04)  
+   *(Current repository — the one you are reading these instructions from)*  
+   
+2. [**Infrastructure Automation using Terraform and Ansible 🧰 ⚙️**](https://github.com/kapilkumaria/cv-challenge-04-infrastructure) - [**Repo Here**](https://github.com/kapilkumaria/cv-challenge-04-infrastructure)  
+
+3. [**Kubernetes Manifests for Deployment 🚀 ☸️**](https://github.com/kapilkumaria/cv-challenge-04-kubernetes) - [**Repo Here**](https://github.com/kapilkumaria/cv-challenge-04-kubernetes)  
+
+
 ## Objectives
 
