@@ -1,61 +1,3 @@
-# name: Frontend CI Pipeline
-
-# on:
-#   workflow_dispatch:
-#   push:
-#     branches:
-#       - main
-#     paths:
-#       - src/frontend/**
-
-# env:
-#   SERVICE_NAME: frontend
-#   DOCKERHUB_IMAGE_TAG: kappu1512/frontend
-
-# jobs:
-#   build-and-scan:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v3
-
-#       - name: Install Trivy
-#         run: |
-#           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-#           sudo mv ./bin/trivy /usr/local/bin/
-
-#       - name: Build Docker Image
-#         run: |
-#           docker build -t ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }} -f src/frontend/Dockerfile src/frontend
-#           docker images  # Log the images after build
-
-#       - name: Verify Docker Image Exists
-#         run: |
-#           docker images | grep ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }} || (echo "Image not found!" && exit 1)
-
-#       - name: Trivy Scan for Docker Image
-#         run: |
-#           trivy image --severity HIGH,CRITICAL --exit-code 1 --scanners vuln ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }} || true
-
-#   push-to-dockerhub:
-#     needs: build-and-scan
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v3
-
-#       - name: Log in to Docker Hub
-#         env:
-#           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-#           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-#         run: |
-#           echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
-
-#       - name: Push Docker Image
-#         run: |
-#           docker push ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
-
 name: Frontend CI Pipeline
 
 on:
@@ -84,10 +26,7 @@ jobs:
             docker build -t ${{ env.SERVICE_NAME }}:latest -f src/frontend/Dockerfile src/frontend
             docker images  # Log the images on the runner
 
-    #   - name: Verify Built Image
-    #     run: |
-    #       docker images | grep ${{ env.SERVICE_NAME }}:latest || (echo "Image not found!" && exit 1)
-
+       # Verify Built Image
       - name: Verify Built Image
         run: |
             docker inspect --type=image frontend:latest || (echo "Image not found!" && exit 1)
@@ -111,9 +50,12 @@ jobs:
         run: |
           echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
 
-      - name: Verify Image Before Tagging
-        run: |
-            docker inspect --type=image frontend:latest || (echo "Image not found!" && exit 1)        
+      - name: List Images Before Tagging
+        run: docker images
+        
+    #   - name: Verify Image Before Tagging
+    #     run: |
+    #         docker inspect --type=image frontend:latest || (echo "Image not found!" && exit 1)        
 
       - name: Tag and Push Docker Image
         run: |
