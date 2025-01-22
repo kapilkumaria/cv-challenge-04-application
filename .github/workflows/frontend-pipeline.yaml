@@ -84,9 +84,14 @@ jobs:
             docker build -t ${{ env.SERVICE_NAME }}:latest -f src/frontend/Dockerfile src/frontend
             docker images  # Log the images on the runner
 
+    #   - name: Verify Built Image
+    #     run: |
+    #       docker images | grep ${{ env.SERVICE_NAME }}:latest || (echo "Image not found!" && exit 1)
+    
       - name: Verify Built Image
         run: |
-          docker images | grep ${{ env.SERVICE_NAME }}:latest || (echo "Image not found!" && exit 1)
+            docker inspect --type=image frontend:latest || (echo "Image not found!" && exit 1)
+
 
       - name: Trivy Scan for Docker Image
         run: |
