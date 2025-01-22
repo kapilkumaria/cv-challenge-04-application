@@ -4,10 +4,10 @@ on:
   # Trigger manually or when changes are made to the Dockerfile folder
   workflow_dispatch:  # Manual trigger
   push:  # Trigger when changes are made in the specified folder
-   branches:
-        - main
-   paths:
-        - src/frontend/**  # Adjust to match the path to your Dockerfile
+    branches:
+            - main
+    # paths:
+    #         - src/frontend/**  # Adjust to match the path to your Dockerfile
 
 env:
   SERVICE_NAME: frontend
