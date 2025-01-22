@@ -32,6 +32,11 @@ jobs:
         run: |
             docker inspect --type=image ${{ env.SERVICE_NAME }}:${{ github.run_number }} || (echo "Image not found!" && exit 1)
 
+       # Install Trivy
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+          sudo mv trivy /usr/local/bin/
 
       - name: Trivy Scan for Docker Image
         run: |
