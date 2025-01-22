@@ -3,7 +3,7 @@ name: Frontend CI Pipeline
 on:
   # Trigger manually or when changes are made to the Dockerfile folder
   workflow_dispatch:  # Manual trigger
-  push:  # Trigger when changes are made in the specified folder
+  push:  main # Trigger when changes are made in the specified folder
     paths:
       - src/frontend/**  # Adjust to match the path to your Dockerfile
 
