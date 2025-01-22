@@ -1,0 +1,69 @@
+name: Productcatalogservice CI Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/productcatalogservice/**' # Adjust to the path containing your Dockerfile
+
+env:
+  SERVICE_NAME: productcatalogservice
+  DOCKERHUB_IMAGE_TAG: kappu1512/productcatalogservice
+
+jobs:
+  build-and-scan:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+    
+       # Build the Docker image
+      - name: Build Docker Image
+        run: |
+            docker build -t ${{ env.SERVICE_NAME }}:${{ github.run_number }} -f src/productcatalogservice/Dockerfile src/productcatalogservice
+            docker images  # Log the images on the runner
+
+       # Verify Built Image
+      - name: Verify Built Image
+        run: |
+            docker inspect --type=image ${{ env.SERVICE_NAME }}:${{ github.run_number }} || (echo "Image not found!" && exit 1)
+      
+       # Install Trivy
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+          sudo mv ./bin/trivy /usr/local/bin/trivy
+
+      - name: Trivy Scan for Docker Image
+        run: |
+          trivy image --severity HIGH,CRITICAL --exit-code 1 --scanners vuln ${{ env.SERVICE_NAME }}:${{ github.run_number }} || true
+
+  push-to-dockerhub:
+    needs: build-and-scan
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+
+        # Verify Built Image
+      - name: Verify Built Image
+        run: |
+            docker inspect --type=image ${{ env.SERVICE_NAME }}:${{ github.run_number }} || (echo "Image not found!" && exit 1)
+                   
+      - name: Tag and Push Docker Image
+        run: |
+          docker tag ${{ env.SERVICE_NAME }}:${{ github.run_number }} ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
+          docker images
+          sleep 20
+          docker push ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
+          
