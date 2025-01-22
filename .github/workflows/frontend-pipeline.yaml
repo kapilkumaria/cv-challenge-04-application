@@ -87,7 +87,7 @@ jobs:
     #   - name: Verify Built Image
     #     run: |
     #       docker images | grep ${{ env.SERVICE_NAME }}:latest || (echo "Image not found!" && exit 1)
-    
+
       - name: Verify Built Image
         run: |
             docker inspect --type=image frontend:latest || (echo "Image not found!" && exit 1)
@@ -110,6 +110,10 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+
+      - name: Verify Image Before Tagging
+        run: |
+            docker inspect --type=image frontend:latest || (echo "Image not found!" && exit 1)        
 
       - name: Tag and Push Docker Image
         run: |
