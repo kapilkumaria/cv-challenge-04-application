@@ -47,6 +47,7 @@ jobs:
     needs: build-and-scan
     runs-on: self-hosted
     steps:
+      # Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
 
