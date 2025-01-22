@@ -54,10 +54,7 @@ jobs:
       - name: Verify Built Image
         run: |
             docker inspect --type=image ${{ env.SERVICE_NAME }}:${{ github.run_number }} || (echo "Image not found!" && exit 1)
-     
-    #   - name: List Images Before Tagging
-    #     run: docker images
-           
+                   
       - name: Tag and Push Docker Image
         run: |
           docker tag ${{ env.SERVICE_NAME }}:${{ github.run_number }} ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
