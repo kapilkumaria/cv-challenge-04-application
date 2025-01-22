@@ -90,7 +90,7 @@ jobs:
 
       - name: Trivy Scan for Docker Image
         run: |
-          trivy image --severity HIGH,CRITICAL --exit-code 1 --scanners vuln ${{ env.SERVICE_NAME }}:11 || true
+          trivy image --severity HIGH,CRITICAL --exit-code 1 --scanners vuln ${{ env.SERVICE_NAME }}:latest || true
 
   push-to-dockerhub:
     needs: build-and-scan
@@ -108,8 +108,8 @@ jobs:
 
       - name: Tag and Push Docker Image
         run: |
-          docker tag ${{ env.SERVICE_NAME }}:latest ${{ env.SERVICE_NAME }}:${{ github.run_number }}
+          docker tag ${{ env.SERVICE_NAME }}:latest ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
           docker images
           sleep 20
-          docker push ${{ env.SERVICE_NAME }}:${{ github.run_number }}
+          docker push ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
           
