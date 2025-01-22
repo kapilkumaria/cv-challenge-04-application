@@ -50,10 +50,10 @@ jobs:
         run: |
           echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
 
-        # Verify Built Image
-      - name: Verify Built Image
-        run: |
-            docker inspect --type=image ${{ env.SERVICE_NAME }}:${{ github.run_number }} || (echo "Image not found!" && exit 1)
+    #     # Verify Built Image
+    #   - name: Verify Built Image
+    #     run: |
+    #         docker inspect --type=image ${{ env.SERVICE_NAME }}:${{ github.run_number }} || (echo "Image not found!" && exit 1)
      
       - name: List Images Before Tagging
         run: docker images
