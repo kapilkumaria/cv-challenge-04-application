@@ -1,18 +1,23 @@
 name: Currencyservice CI Pipeline
 
+# Define the trigger events
 on:
   workflow_dispatch: # Allows manual triggering of the workflow
   push:
+    # Define the push event for the main branch
     branches:
       - main
     paths:
       - 'src/currencyservice/**' # Adjust to the path containing your Dockerfile
   
+# Define the environment variables      
 env:
   SERVICE_NAME: currencyservice
   DOCKERHUB_IMAGE_TAG: kappu1512/currencyservice
 
+# Define the jobs  
 jobs:
+  # Build and scan the Docker image
   build-and-scan:
     runs-on: self-hosted # Use your self-hosted runner
     
@@ -38,18 +43,23 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
           sudo mv ./bin/trivy /usr/local/bin/trivy
 
+      # Trivy Scan for Docker Image    
       - name: Trivy Scan for Docker Image
         run: |
           trivy image --severity HIGH,CRITICAL --exit-code 1 --scanners vuln ${{ env.SERVICE_NAME }}:${{ github.run_number }} || true
 
+  # Push the Docker image to Docker Hub and update the K8s deployment manifest        
   push-to-dockerhub:
     needs: build-and-scan
     runs-on: self-hosted
 
+    # Define the steps
     steps:
+      # Checkout the repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # Log in to Docker Hub
       - name: Log in to Docker Hub
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -57,14 +67,38 @@ jobs:
         run: |
           echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
 
-        # Verify Built Image
+      # Verify Built Image
       - name: Verify Built Image
         run: |
             docker inspect --type=image ${{ env.SERVICE_NAME }}:${{ github.run_number }} || (echo "Image not found!" && exit 1)
-                   
+      
+      # Tag and Push Docker Image      
       - name: Tag and Push Docker Image
         run: |
           docker tag ${{ env.SERVICE_NAME }}:${{ github.run_number }} ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
           docker images
           sleep 20
           docker push ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
+
+      # Update K8s Deployment Manifest        
+      - name: Update K8s Deployment Manifest
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        run: |
+          # Clone the target repository
+          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/kapilkumaria/cv-challenge-04-kubernetes.git
+          cd cv-challenge-04-kubernetes
+
+          # Pull the latest changes from the remote
+          git pull origin main --rebase
+
+          # Update the deployment.yaml file with the new image tag
+          sed -i "s|image: kappu1512/currencyservice:.*|image: kappu1512/currencyservice:${{ github.run_number }}|g" apps/currencyservice/deployment.yaml
+
+          # Commit and push the change
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add apps/currencyservice/deployment.yaml
+          git commit -m "Update currencyservice image tag to ${{ github.run_number }}"
+          git push https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/kapilkumaria/cv-challenge-04-kubernetes.git
+      
