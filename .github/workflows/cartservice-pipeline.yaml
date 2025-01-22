@@ -92,7 +92,7 @@ jobs:
           git pull origin main --rebase
 
           # Update the deployment.yaml file with the new image tag
-          sed -i "s|image: kappu1512/adservice:.*|image: kappu1512/cartservice:${{ github.run_number }}|g" apps/cartservice/deployment.yaml
+          sed -i "s|image: kappu1512/cartservice:.*|image: kappu1512/cartservice:${{ github.run_number }}|g" apps/cartservice/deployment.yaml
 
           # Commit and push the change
           git config user.name "github-actions[bot]"
