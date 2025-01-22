@@ -69,8 +69,14 @@ jobs:
           echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
 
       # Tag and push the Docker image to Docker Hub
+    #   - name: Push Docker Image
+    #     run: |
+    #       docker images
+    #       docker tag ${{ env.SERVICE_NAME }}:latest ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
+    #       docker push ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
+
       - name: Push Docker Image
         run: |
-          docker images
-          docker tag ${{ env.SERVICE_NAME }}:latest ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
-          docker push ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
+            docker tag docker.io/library/${{ env.SERVICE_NAME }}:latest ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
+            docker push ${{ env.DOCKERHUB_IMAGE_TAG }}:${{ github.run_number }}
+  
