@@ -6,8 +6,7 @@ on:
     branches:
       - main
     paths:
-      - Dockerfile
-      # - 'src/frontend/**' # Adjust to the path containing your Dockerfile
+      - 'src/frontend/**' # Adjust to the path containing your Dockerfile
 
 env:
   SERVICE_NAME: frontend
