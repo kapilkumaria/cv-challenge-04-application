@@ -1,13 +1,16 @@
 name: Adservice CI Pipeline
 
+# Define the triggers 
 on:
   workflow_dispatch: # Allows manual triggering of the workflow
+  # Trigger the workflow on push to the main branch
   push:
     branches:
       - main
     paths:
       - 'src/adservice/**' # Adjust to the path containing your Dockerfile
-  
+
+# Define the environment variables      
 env:
   SERVICE_NAME: adservice
   DOCKERHUB_IMAGE_TAG: kappu1512/adservice
