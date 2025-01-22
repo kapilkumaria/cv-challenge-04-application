@@ -35,6 +35,12 @@ jobs:
     #         -Dsonar.host.url=${{ env.SONARQUBE_SERVER_URL }} \
     #         -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
+      # Install Trivy
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+          sudo mv trivy /usr/local/bin/
+          
       # Build the Docker image
       - name: Build Docker Image
         run: |
