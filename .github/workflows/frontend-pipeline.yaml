@@ -38,6 +38,7 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
           sudo mv ./bin/trivy /usr/local/bin/trivy
 
+      # Trivy Scan for Docker Image    
       - name: Trivy Scan for Docker Image
         run: |
           trivy image --severity HIGH,CRITICAL --exit-code 1 --scanners vuln ${{ env.SERVICE_NAME }}:${{ github.run_number }} || true
