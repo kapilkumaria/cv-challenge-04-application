@@ -38,7 +38,7 @@ jobs:
 
   push-to-dockerhub:
     needs: build-and-scan
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
