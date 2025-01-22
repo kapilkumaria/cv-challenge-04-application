@@ -10,7 +10,7 @@ on:
 
 env:
   SERVICE_NAME: frontend
-  DOCKERHUB_IMAGE_TAG: your-dockerhub-username/frontend
+  DOCKERHUB_IMAGE_TAG: kappu1512/frontend
 
 jobs:
   build-and-scan:
