@@ -77,19 +77,20 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-
+    
+       # Build the Docker image
       - name: Build Docker Image
         run: |
-          docker build -t ${{ env.DOCKERHUB_IMAGE_TAG }}:11 -f Dockerfile .
-          docker images
+            docker build -t ${{ env.SERVICE_NAME }}:latest -f src/frontend/Dockerfile src/frontend
+            docker images  # Log the images on the runner
 
       - name: Verify Built Image
         run: |
-          docker images | grep ${{ env.DOCKERHUB_IMAGE_TAG }}:11 || (echo "Image not found!" && exit 1)
+          docker images | grep ${{ env.SERVICE_NAME }}:11 || (echo "Image not found!" && exit 1)
 
       - name: Trivy Scan for Docker Image
         run: |
-          trivy image --severity HIGH,CRITICAL --exit-code 1 --scanners vuln ${{ env.DOCKERHUB_IMAGE_TAG }}:11 || true
+          trivy image --severity HIGH,CRITICAL --exit-code 1 --scanners vuln ${{ env.SERVICE_NAME }}:11 || true
 
   push-to-dockerhub:
     needs: build-and-scan
@@ -107,4 +108,4 @@ jobs:
 
       - name: Push Docker Image
         run: |
-          docker push ${{ env.DOCKERHUB_IMAGE_TAG }}:11
+          docker push ${{ env.SERVICE_NAME }}:11
