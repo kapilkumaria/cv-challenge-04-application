@@ -24,7 +24,7 @@ jobs:
       # Build the Docker image
       - name: Build Docker Image
         run: |
-          docker build -t ${{ env.SERVICE_NAME }}:${{ github.run_number }} -f src/cartservice/src/Dockerfile src/cartservice
+          docker build -t ${{ env.SERVICE_NAME }}:${{ github.run_number }} -f src/cartservice/src/Dockerfile src/cartservice/src
           docker images  # Log the images on the runner
 
       # Verify Built Image
